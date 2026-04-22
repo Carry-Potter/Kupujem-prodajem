@@ -14,7 +14,8 @@ export function normalizeTitleText(s: string): string {
 function splitWords(s: string): string[] {
   return s
     .split(/[^a-zA-Z0-9]+/)
-    .filter((w) => w.length > 0);
+    // Ignoriši 1-slovo "reči" (npr. "i", "u") koje prave lažna poklapanja.
+    .filter((w) => w.length >= 2);
 }
 
 /** Levenštajn za kratke reči (O(nm), nm su mali) */
@@ -40,7 +41,10 @@ function levenshtein(a: string, b: string): number {
 
 function wordMatchesToken(kwToken: string, titleWord: string): boolean {
   if (!kwToken || !titleWord) return false;
-  if (titleWord.includes(kwToken) || kwToken.includes(titleWord)) return true;
+  if (titleWord.includes(kwToken)) return true;
+  // Obrnuti contains dozvoli samo za duže segmente (npr. "bicikl" vs "bicikli"),
+  // da 1-2 slova iz naslova ne bi lažno poklapala skoro svaki token.
+  if (titleWord.length >= 4 && kwToken.includes(titleWord)) return true;
   if (kwToken.length <= 2) {
     return titleWord === kwToken;
   }
