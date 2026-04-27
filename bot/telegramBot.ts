@@ -4,9 +4,13 @@
  * Pokretanje: npm run telegram-bot
  * Zahteva: TELEGRAM_BOT_TOKEN, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  */
-import "dotenv/config";
+import dotenv from "dotenv";
 import TelegramBot from "node-telegram-bot-api";
 import { createAdminClient } from "@/lib/supabase/admin";
+
+// Local dev: prvo .env.local (Next stil), zatim fallback na .env.
+dotenv.config({ path: ".env.local" });
+dotenv.config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN?.trim();
 if (!token) {
@@ -24,7 +28,7 @@ bot.onText(/^\/start(?:\s+(\S+))?$/, async (msg, match) => {
   if (!connectToken) {
     await bot.sendMessage(
       chatId,
-      "Zdravo! Otvori link iz aplikacije (Poveži Telegram) da dobiješ /start sa kodom, ili unesi chat ID ručno u podešavanjima."
+      `Zdravo! Otvori link iz aplikacije (Poveži Telegram) da dobiješ /start sa kodom.\n\nAko želiš ručno povezivanje, tvoj chat ID je: ${chatId}`
     );
     return;
   }
@@ -95,6 +99,10 @@ bot.onText(/^\/(?!start\b)(\w+)/, async (msg) => {
     msg.chat.id,
     "Nepoznata komanda. Za povezivanje koristi link iz aplikacije (Podešavanja → Poveži Telegram)."
   );
+});
+
+bot.onText(/^\/chatid$/, async (msg) => {
+  await bot.sendMessage(msg.chat.id, `Tvoj chat ID je: ${msg.chat.id}`);
 });
 
 bot.on("polling_error", (err) => {

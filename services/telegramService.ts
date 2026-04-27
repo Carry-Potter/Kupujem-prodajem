@@ -56,6 +56,7 @@ export async function sendTelegramNotification(
 
   const chatId = data?.telegram_chat_id;
   if (chatId == null || String(chatId).trim() === "") {
+    console.info(`[telegramService] user ${userId} nema telegram_chat_id`);
     return false;
   }
 

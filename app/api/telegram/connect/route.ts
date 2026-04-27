@@ -1,6 +1,11 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import {
+  ensureTelegramWebhookConfigured,
+  getTelegramBotUsername,
+  hasWebhookConfig,
+} from "@/lib/telegram-webhook";
 
 export const dynamic = "force-dynamic";
 
@@ -32,9 +37,7 @@ export async function POST() {
     );
   }
 
-  const botUsername =
-    process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?.replace(/^@/, "").trim() ||
-    process.env.TELEGRAM_BOT_USERNAME?.replace(/^@/, "").trim();
+  const botUsername = getTelegramBotUsername();
 
   if (!botUsername) {
     return NextResponse.json(
@@ -42,6 +45,26 @@ export async function POST() {
         error:
           "Nije podešen NEXT_PUBLIC_TELEGRAM_BOT_USERNAME (ili TELEGRAM_BOT_USERNAME).",
       },
+      { status: 500 }
+    );
+  }
+
+  if (!hasWebhookConfig()) {
+    return NextResponse.json(
+      {
+        error:
+          "Webhook nije potpuno podešen. Dodaj TELEGRAM_WEBHOOK_SECRET i NEXT_PUBLIC_APP_URL u env.",
+      },
+      { status: 500 }
+    );
+  }
+
+  try {
+    await ensureTelegramWebhookConfigured();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json(
+      { error: `Webhook setup nije uspeo: ${msg}` },
       { status: 500 }
     );
   }

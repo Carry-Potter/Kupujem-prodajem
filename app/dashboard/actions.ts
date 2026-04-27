@@ -14,6 +14,12 @@ import { updateTelegramChatId } from "@/services/user.service";
 import { tryImmediateScrapeForAlert } from "@/services/immediate-scrape";
 import { agentLog } from "@/lib/debug-agent-log";
 
+function kickOffImmediateScrape(alertId: string): void {
+  void tryImmediateScrapeForAlert(alertId).catch((e) => {
+    console.error("[notifyKP] Background immediate scrape failed:", e);
+  });
+}
+
 export async function signOutAction() {
   const supabase = createClient();
   await supabase.auth.signOut();
@@ -64,7 +70,7 @@ export async function createAlertAction(formData: FormData) {
       "H1"
     );
     // #endregion
-    await tryImmediateScrapeForAlert(createdId);
+    kickOffImmediateScrape(createdId);
   }
 
   revalidatePath("/dashboard");
@@ -104,7 +110,7 @@ export async function updateAlertAction(alertId: string, formData: FormData) {
     return { error: e instanceof Error ? e.message : "Greška pri čuvanju." };
   }
 
-  await tryImmediateScrapeForAlert(alertId);
+  kickOffImmediateScrape(alertId);
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/oglasi");
@@ -149,7 +155,7 @@ export async function toggleAlertAction(
   }
 
   if (isActive) {
-    await tryImmediateScrapeForAlert(alertId);
+    kickOffImmediateScrape(alertId);
   }
 
   revalidatePath("/dashboard");

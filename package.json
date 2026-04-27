@@ -17,6 +17,7 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.103.0",
     "cheerio": "^1.0.0",
+    "cloudflared": "^0.7.1",
     "dotenv": "^16.4.5",
     "next": "14.2.18",
     "node-cron": "^3.0.3",

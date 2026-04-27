@@ -134,10 +134,11 @@ export function CreateAlertForm() {
         />
         <p className="mt-1 text-xs text-slate-500">
           Ako uneseš tekst, uparivanje je bez razlike malih/velikih slova i traži
-          podstring u polju lokacije oglasa. Posle čuvanja server odmah skenira KP
-          (potreban je <code className="rounded bg-slate-100 px-1">SUPABASE_SERVICE_ROLE_KEY</code> u{" "}
-          <code className="rounded bg-slate-100 px-1">.env.local</code>) – stranica može
-          potrajati nekoliko sekundi.
+          podstring u polju lokacije oglasa. Posle čuvanja server pokreće KP sken
+          u pozadini (potreban je{" "}
+          <code className="rounded bg-slate-100 px-1">SUPABASE_SERVICE_ROLE_KEY</code>{" "}
+          u <code className="rounded bg-slate-100 px-1">.env.local</code>), pa
+          čuvanje više ne čeka kompletno skeniranje.
         </p>
       </div>
       <button

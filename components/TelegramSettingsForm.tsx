@@ -52,6 +52,12 @@ export function TelegramSettingsForm({ initialChatId }: Props) {
           Generiši link, otvori ga u Telegramu i pritisni Start. Ne moraš ručno da
           tražiš chat ID.
         </p>
+        <p className="mt-2 text-xs text-slate-500">
+          Povezivanje ide preko Telegram webhook-a unutar aplikacije. Potrebni su{" "}
+          <code className="rounded bg-slate-100 px-1">TELEGRAM_WEBHOOK_SECRET</code>{" "}
+          i javno dostupan{" "}
+          <code className="rounded bg-slate-100 px-1">NEXT_PUBLIC_APP_URL</code>.
+        </p>
         {connectError && (
           <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">
             {connectError}

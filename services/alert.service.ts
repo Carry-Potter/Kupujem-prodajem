@@ -80,12 +80,14 @@ export async function createAlert(
   userId: string,
   input: AlertInput
 ): Promise<DbAlert> {
-  const profile = await getProfile(supabase, userId);
+  const [profile, n] = await Promise.all([
+    getProfile(supabase, userId),
+    countUserAlerts(supabase, userId),
+  ]);
   if (!profile) throw new Error("Profil korisnika nije pronađen.");
 
   validatePrices(input.max_price, input.min_price);
 
-  const n = await countUserAlerts(supabase, userId);
   if (profile.plan === "free" && n >= FREE_ALERT_LIMIT) {
     throw new Error(
       `Besplatni plan dozvoljava najviše ${FREE_ALERT_LIMIT} upozorenja. Nadogradite na Pro.`
